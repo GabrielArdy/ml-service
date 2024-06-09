@@ -2,25 +2,24 @@ const tf = require('@tensorflow/tfjs-node');
 
 async function classPrediction(model, imageBuffer) {
   try {
-    // Decode image and preprocess
     const tensor = tf.node
       .decodeJpeg(imageBuffer, 3)
       .resizeNearestNeighbor([160, 160])
-      .expandDims()
       .toFloat()
-      .div(tf.scalar(255)); // Normalizing the image
+      .div(tf.scalar(127.5))
+      .sub(tf.scalar(1));
 
-    // Make predictions using the layers model
-    const prediction = model.predict(tensor);
+    const prediction = model.predict(tensor.expandDims());
     const scores = await prediction.data();
 
-    // Get the highest confidence score and corresponding class
     const confidences = Math.max(...scores) * 100;
     const classes = ['raw', 'ripe'];
-
-    const predictedClassIndex = scores.indexOf(Math.max(...scores));
+    const predictedClassIndex = tf.argMax(prediction, 1).dataSync()[0];
+    
     const result = {
       class: classes[predictedClassIndex],
+      index: predictedClassIndex,
+      scores: scores,
       confidence: confidences
     };
 

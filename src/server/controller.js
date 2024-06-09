@@ -3,7 +3,7 @@ const classPrediction = require('../services/inference');
 async function predict(req, res) {
   try {
     const imageBuffer = req.file.buffer;
-    const model = req.app.locals.model; // Accessing model from app locals
+    const model = req.app.locals.model;
     const result = await classPrediction(model, imageBuffer);
     
     const data = {
