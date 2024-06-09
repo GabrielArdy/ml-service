@@ -2,7 +2,7 @@ const tf = require('@tensorflow/tfjs-node');
 
 async function loadModel() {
   try {
-    const modelUrl = 'https://storage.googleapis.com/model-ml-agrisense/agrisense-model-main/model.json';
+    const modelUrl = process.env.MODEL_URL;
     const model = await tf.loadLayersModel(modelUrl);
     console.log('Model loaded successfully');
     return model;
