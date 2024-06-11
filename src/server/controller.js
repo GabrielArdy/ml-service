@@ -1,7 +1,6 @@
 const classPrediction = require('../services/inference');
 const crypto = require('crypto');
-const { storeData } = require('../services/storeData');
-const { Firestore } = require('@google-cloud/firestore');
+const { storeData, getPredictData } = require('../services/dataAccess');
 
 async function predict(req, res) {
   try {
@@ -18,12 +17,16 @@ async function predict(req, res) {
     const id = crypto.randomBytes(16).toString('hex');
     const createdAt = new Date().toISOString();
 
+    const dummyUserId = ['user1', 'user2', 'user3', 'user4', 'user5']; // dummy user id
+    const userId = dummyUserId[Math.floor(Math.random() * dummyUserId.length)];
+
     
     const data = {
       id: id,
       result: label,
       confidences: `${confidences.toFixed(2)}%`,
       createdAt: createdAt,
+      userId: userId,
       message: confidences > 90 ? 'High confidence' : 'Low confidence'
     };
 
@@ -43,17 +46,8 @@ async function predict(req, res) {
 
 async function getPredictHistories(req, res) {
   try {
-    const db = new Firestore();
-    const collection = db.collection('predictions');
-    const snapshot = await collection.get();
-    const data = snapshot.docs.map((doc) => doc.data());
-    
-    if(data.length === 0) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'No data available'
-      });
-    }
+    userId = req.query.userId;
+    const data = await getPredictData(userId);
     res.status(200).json({
       status: 'success',
       data
