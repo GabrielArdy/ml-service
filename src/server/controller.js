@@ -1,6 +1,6 @@
 const classPrediction = require('../services/inference');
 const crypto = require('crypto');
-const { storeData, getPredictData } = require('../services/dataAccess');
+const { storeData, getPredictDataByUserId, getPredictDataById } = require('../services/dataAccess');
 
 async function predict(req, res) {
   try {
@@ -44,10 +44,10 @@ async function predict(req, res) {
   }
 }
 
-async function getPredictHistories(req, res) {
+async function getPredictHistoriesByUserId(req, res) {
   try {
     userId = req.query.userId;
-    const data = await getPredictData(userId);
+    const data = await getPredictDataByUserId(userId);
     res.status(200).json({
       status: 'success',
       data
@@ -60,4 +60,20 @@ async function getPredictHistories(req, res) {
   }
 }
 
-module.exports = { predict, getPredictHistories };
+async function getPredictById(req, res) {
+  try {
+    const id = req.params.id;
+    const data = await getPredictDataById(id);
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    });
+  }
+}
+
+module.exports = { predict, getPredictHistoriesByUserId, getPredictById };

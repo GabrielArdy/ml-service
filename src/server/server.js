@@ -1,5 +1,6 @@
 const express = require('express');
 const { loadModel } = require('../services/loadModel');
+const routes = require('./routes');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -10,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const routes = require('./routes');
+
 app.use(routes);
 
 app.get('/', (req, res) => {

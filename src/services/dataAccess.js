@@ -7,11 +7,17 @@ async function storeData(id, data) {
   return collection.doc(id).set(data);
 }
 
-async function getPredictData(userId) {
+async function getPredictDataByUserId(userId) {
   const collection = db.collection('predictions');
   const snapshot = await collection.where('userId', '==', userId).get();
   const data = snapshot.docs.map((doc) => doc.data());
   return data;
 }
 
-module.exports = { storeData, getPredictData };
+async function getPredictDataById(id) {
+  const collection = db.collection('predictions');
+  const snapshot = await collection.doc(id).get();
+  return snapshot.data();
+}
+
+module.exports = { storeData, getPredictDataByUserId, getPredictDataById};
