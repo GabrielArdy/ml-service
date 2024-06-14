@@ -1,6 +1,7 @@
 const classPrediction = require('../services/inference');
 const crypto = require('crypto');
 const { storeData, getPredictDataByUserId, getPredictDataById } = require('../services/dataAccess');
+const { suggest } = require('../services/suggest');
 
 async function predict(req, res) {
   try {
@@ -20,6 +21,8 @@ async function predict(req, res) {
     const dummyUserId = ['user1', 'user2', 'user3', 'user4', 'user5']; // dummy user id
     const userId = dummyUserId[Math.floor(Math.random() * dummyUserId.length)];
 
+    const suggestion = await suggest(label);
+
     
     const data = {
       id: id,
@@ -27,7 +30,8 @@ async function predict(req, res) {
       confidences: `${confidences.toFixed(2)}%`,
       createdAt: createdAt,
       userId: userId,
-      message: confidences > 90 ? 'High confidence' : 'Low confidence'
+      message: confidences > 90 ? 'High confidence' : 'Low confidence',
+      suggestion: suggestion
     };
 
     await storeData(id, data);
