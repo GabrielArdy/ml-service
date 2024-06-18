@@ -14,7 +14,7 @@ async function suggest(prediction) {
     }
   
     if (prediction === 'Ripe') {
-      const result = await model.generate(prompt[0]);
+      const result = await model.generateContent(prompt[0]);
       const response = await result.response;
       return response;
     }
